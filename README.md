@@ -205,6 +205,72 @@ public abstract class Hilt_App extends Application implements GeneratedComponent
 }
 ```
 </details>
-위 `Hilt_App` 클래스 내에서 `generatedComponent()` 메소드로 Component를 생성하기 때문에 Hilt를 사용하게되면 Component interface가 필요없게 되므로 `DataSourceComponent` 인터페이스 파일을 제거합니다. 
+   
+위 `Hilt_App` 클래스 내에서 `generatedComponent()` 메소드로 Component를 생성하기 때문에 
+Hilt를 사용하게되면 Component interface를 명시적으로 생성할 필요없게 되므로 `DataSourceComponent` 인터페이스 파일을 제거합니다. 
 
+### Hilt Components
+<a href="https://developer.android.com/training/dependency-injection/hilt-android#generated-components">   
+Hilt 는 아래와 같은 Component들을 제공합니다. 
+</a>
+<div class="devsite-table-wrapper"><table>
+  <tbody><tr>
+    <th>Hilt component</th>
+    <th>Injector for</th>
+  </tr>
 
+  <tr>
+    <td><code translate="no" dir="ltr">SingletonComponent</code></td>
+    <td><code translate="no" dir="ltr">Application</code></td>
+  </tr>
+
+  <tr>
+    <td><code translate="no" dir="ltr">ActivityRetainedComponent</code></td>
+    <td>N/A</td>
+  </tr>
+
+  <tr>
+    <td><code translate="no" dir="ltr">ViewModelComponent</code></td>
+    <td><code translate="no" dir="ltr">ViewModel</code></td>
+  </tr>
+
+  <tr>
+    <td><code translate="no" dir="ltr">ActivityComponent</code></td>
+    <td><code translate="no" dir="ltr">Activity</code></td>
+  </tr>
+
+  <tr>
+    <td><code translate="no" dir="ltr">FragmentComponent</code></td>
+    <td><code translate="no" dir="ltr">Fragment</code></td>
+  </tr>
+
+  <tr>
+    <td><code translate="no" dir="ltr">ViewComponent</code></td>
+    <td><code translate="no" dir="ltr">View</code></td>
+  </tr>
+
+  <tr>
+    <td><code translate="no" dir="ltr">ViewWithFragmentComponent</code></td>
+    <td><code translate="no" dir="ltr">View</code> annotated with <code translate="no" dir="ltr">@WithFragmentBindings</code></td>
+  </tr>
+
+  <tr>
+    <td><code translate="no" dir="ltr">ServiceComponent</code></td>
+    <td><code translate="no" dir="ltr">Service</code></td>
+  </tr>
+</tbody></table></div>
+
+Dagger에서는 각각의 Module 클래스를 @Component 어노테이션 안에서 module로 직접 지정했지만 Hilt에서는 Module 클래스에 @InstallIn 어노테이션을 추가하여 위 Component 중에서 어떤 Component를 사용할 지 설정합니다. 
+```kotlin
+@Module
+@InstallIn(ApplicationComponent::class)
+class DataModule {
+    @Provides
+    fun providesDataSource():DataSource{
+        return DataSource()
+    }
+}
+```
+   
+   *※Hilt <b>2.31 버전</b>부터는 ApplicationCompoent 대신 SingletonComponent로 사용합니다.*
+ 
