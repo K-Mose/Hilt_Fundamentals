@@ -157,3 +157,54 @@ android {
     }
 }
 ```
+
+### Hilt Application Class
+우선 Application class를 Hilt로 변경합니다. 모든 Hilt의 Application class는 반드시 @HiltAndroidApp 어노테이션이 필요합니다. 
+그리고 클래스 내에 코드를 작성할 필요가 없으므로 다 지웁니다. 
+```kotlin
+@HiltAndroidApp 
+class App : Application()
+```
+@HiltAndroidApp 어노테이션은 app level의 의존성 컨테이너로 사용되는 기본 클래스를 앱에 포함하여 Hilt 코드를 생성하는 트리거가 됩니다. 
+아래와 같은 코드를 생성합니다. 
+<details>
+   <summary>class Hilt_App</summary>
+   
+```java
+/**
+ * A generated base class to be extended by the @dagger.hilt.android.HiltAndroidApp annotated class. If using the Gradle plugin, this is swapped as the base class via bytecode transformation.
+ */
+@Generated("dagger.hilt.android.processor.internal.androidentrypoint.ApplicationGenerator")
+public abstract class Hilt_App extends Application implements GeneratedComponentManager<Object> {
+  private final ApplicationComponentManager componentManager = new ApplicationComponentManager(new ComponentSupplier() {
+    @Override
+    public Object get() {
+      return DaggerApp_HiltComponents_ApplicationC.builder()
+          .applicationContextModule(new ApplicationContextModule(Hilt_App.this))
+          .build();
+    }
+  });
+
+  protected final ApplicationComponentManager componentManager() {
+    return componentManager;
+  }
+
+  @Override
+  public final Object generatedComponent() {
+    return componentManager().generatedComponent();
+  }
+
+  @CallSuper
+  @Override
+  public void onCreate() {
+    // This is a known unsafe cast, but is safe in the only correct use case:
+    // App extends Hilt_App
+    ((App_GeneratedInjector) generatedComponent()).injectApp(UnsafeCasts.<App>unsafeCast(this));
+    super.onCreate();
+  }
+}
+```
+</details>
+위 `Hilt_App` 클래스 내에서 `generatedComponent()` 메소드로 Component를 생성하기 때문에 Hilt를 사용하게되면 Component interface가 필요없게 되므로 `DataSourceComponent` 인터페이스 파일을 제거합니다. 
+
+
