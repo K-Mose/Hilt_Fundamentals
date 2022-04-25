@@ -21,3 +21,90 @@ Dagger</a>.</p>
 
 Hilt는 Dagger위에 작성되었기 때문에 Dagger를 이용하며, Dagger를 쉽고 효율적으로 사용할 수 있도록 합니다. 
 그렇기 떄문에 Hilt를 공부하기 앞서서 Dagger를 이해하는 것이 우선입니다. 
+
+## Example 
+이번에는 Dagger로 작성된 DI를 Hilt로 변경하도록 하겠습니다. 
+`DataSource`라는 클래스는 
+### Basic Sturcture
+```
+HiltDemo
+└─ app
+   └─ src
+      └─ main 
+         ├─ AndroidManifest.xml
+         └─ java
+            └─ com
+               └─ kmose
+                  └─ hiltdemo
+                     ├─ DataSource.kt
+                     └─ MainActivity.kt
+```
+기본 구조는 아래와 같습니다. `DataSource`는 외부라이브러리로서 코드 수정이 블가능한 클래스입니다. 
+이 클래스를 `MainActivity`에서 DI를 하도록 하는 예 입니다. 
+
+외부에 있는 `DataSource` 클래스를 DI 하기 위해서 Module과 Component를 생성하고 Application을 상속하는 클래스를 만들어 앱이 로드될 때 의존성을 주입하는 코드로 아래와 같이 작성합니다. 
+<details>
+  <summary>Dagger Code</summary>
+  
+### AndroidManifest
+```xml
+    <application
+        android:name=".App"
+``` 
+
+### DataSource
+```kotlin 
+class DataSource {
+    fun getRemoteData() {
+        Log.i("MYTAG", "Data downloading ... ")
+    }
+}
+```
+
+### DataModule
+```kotlin 
+@Module
+class DataModule {
+    @Provides
+    fun providesDataSource(): DataSource {
+        return DataSource()
+    }
+}
+```
+
+### DataSourceComponent
+```kotlin 
+@Component(modules = [DataModule::class])
+interface DataSourceComponent {
+    fun inject(mainActivity: MainActivity)
+}
+```
+
+### MainActivity
+```kotlin 
+class MainActivity : AppCompatActivity() {
+    @Inject
+    lateinit var dataSource: DataSource
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        (application as App).daggerComponent.inject(this)
+        dataSource.getRemoteData()
+    }
+}
+```
+
+### App
+```kotlin 
+class App : Application() {
+    lateinit var daggerComponent: DataSourceComponent
+    override fun onCreate() {
+        daggerComponent = DaggerDataSourceComponent.builder().build()
+        super.onCreate()
+    }
+}
+```
+  
+</details>
+
+
