@@ -274,3 +274,44 @@ class DataModule {
    
    *※Hilt <b>2.31 버전</b>부터는 ApplicationCompoent 대신 SingletonComponent로 사용합니다.*
  
+### MainActivity
+Hilt를 사용함으로 Activity에서 Component의 instance를 얻기 위해 `application`을 사용할 필요가 없습니다. 대신 Activity 클래스 진입점에 @AndroidEntryPoint 어노테이션을 사용합니다. 
+```kotlin 
+@AndroidEntryPoint
+class MainActivity : AppCompatActivity() {
+    @Inject
+    lateinit var dataSource: DataSource
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        dataSource.getRemoteData()
+    }
+}
+```
+@AndroidEntryPoint 어노테이션은 각각의 클래스에 Hilt Component들을 생성합니다. Component들은 의존성을 받기 위해 사용됩니다.
+   
+## Dependency 
+Dagger - <br>
+- com.google.dagger:dagger:2.41
+- com.google.dagger:dagger-compiler:2.41
+
+Hilt - <br>
+- project level build.gradle   
+   - dependencies
+      - com.google.dagger:hilt-android-gradle-plugin:2.38.1
+   
+- app level build.gradle
+   - plugins
+       - dagger.hilt.android.plugin
+   - dependencies
+      - com.google.dagger:hilt-android:2.28-alpha
+      - com.google.dagger:hilt-android-compiler:2.28-alpha
+   - compileOptions
+      - sourceCompatibility JavaVersion.VERSION_1_8
+      - targetCompatibility JavaVersion.VERSION_1_8
+
+
+## Ref.
+https://developer.android.com/training/dependency-injection/hilt-android <br>
+https://dagger.dev/hilt/ <br>
+https://developer.android.com/codelabs/android-dagger-to-hilt#0 <br>
