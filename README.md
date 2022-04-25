@@ -44,8 +44,8 @@ HiltDemo
 
 외부에 있는 `DataSource` 클래스를 DI 하기 위해서 Module과 Component를 생성하고 Application을 상속하는 클래스를 만들어 앱이 로드될 때 의존성을 주입하는 코드로 아래와 같이 작성합니다. 
 <details>
-  <summary>Dagger Code</summary>
-  
+   <summary>Dagger Code</summary>
+   
 ### AndroidManifest
 ```xml
     <application
@@ -104,7 +104,56 @@ class App : Application() {
     }
 }
 ```
-  
+                 
+### Dagger Structure              
+```
+HiltDemo
+└─ app
+   └─ src
+      └─ main 
+         ├─ AndroidManifest.xml
+         └─ java
+            └─ com
+               └─ kmose
+                  └─ hiltdemo
+                     ├─ App.kt
+                     ├─ DataModule.kt
+                     ├─ DataSource.kt
+                     ├─ DataSourceComponent.kt
+                     └─ MainActivity.kt
+```
 </details>
 
 
+## Dagger to Hilt 
+우선 Hilt를 사용하기 위해 project's root의 `build.gradle`에 <a href="https://developer.android.com/training/dependency-injection/hilt-android#setup">dependency</a>를 추가합니다. 
+```
+    dependencies {
+        …
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.38.1'
+    }
+```
+그리고 app level `build.gradle`에 pulgin과 dependency를 추가합니다. 
+```
+plugins {
+   …
+   id 'dagger.hilt.android.plugin'
+}
+   ……
+dependencies {
+    …
+    implementation "com.google.dagger:hilt-android:2.28-alpha"
+    kapt "com.google.dagger:hilt-android-compiler:2.28-alpha"
+}
+```
+   
+Hilt는 Java8 기능을 사용하기 때문에 app level `build.gradle`에 아래 기능도 추가합니다. 
+```
+android {
+    ...
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+}
+```
